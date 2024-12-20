@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Student  Form</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link
+      rel="stylesheet"
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css"
+    />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <script src="https://login2explore.com/jpdb/resources/js/0.0.3/jpdb-commons.js"></script>
+  </head>
+
+  <style>
+    /* Internal CSS for styling the form */
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f7f6;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      background-color: #fff;
+      padding: 30px;
+      border-radius: 8px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 30px;
+      color: #333;
+      font-size: 28px;
+    }
+
+    .form-group label {
+      font-weight: bold;
+    }
+
+    .form-control {
+      border-radius: 4px;
+      padding: 10px;
+      font-size: 16px;
+    }
+
+    .btn {
+      font-size: 16px;
+      padding: 10px 20px;
+      margin-top: 15px;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .btn-primary {
+      background-color: #007bff;
+      border-color: #007bff;
+    }
+
+    .btn-primary:hover {
+      background-color: #0056b3;
+      border-color: #0056b3;
+    }
+
+    .btn:disabled {
+      background-color: #ccc;
+      border-color: #ccc;
+      cursor: not-allowed;
+    }
+
+    #empSave,
+    #empChange,
+    #empReset {
+      margin-top: 15px;
+    }
+
+    /* Adding margin to form fields for better spacing */
+    .form-group {
+      margin-bottom: 15px;
+    }
+
+    .alert {
+      text-align: center;
+      margin-top: 20px;
+      color: red;
+      font-weight: bold;
+    }
+  </style>
+
+  <body>
+    <div class="container">
+      <h2>Student Enrollment Form (Micro Project Work)</h2>
+      <form id="stuForm" method="post">
+        <div class="form-group">
+          <label for="stuId">Roll-No:</label>
+          <input
+            type="text"
+            class="form-control"
+            onchange="getStu()"
+            name="stuId"
+            id="stuId"
+            placeholder="Enter Roll-No"
+            required
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="stuName">Student Full Name:</label>
+          <input
+            type="text"
+            class="form-control"
+            id="stuName"
+            placeholder="Enter Full Name"
+            name="stuName"
+            disabled
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="stuClass">Class:</label>
+          <input
+            type="text"
+            class="form-control"
+            id="stuClass"
+            placeholder="Enter Class"
+            name="stuClass"
+            disabled
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="stuDOB">Birth-Date:</label>
+          <input
+            type="date"
+            class="form-control"
+            id="stuDOB"
+            placeholder="Enter Birth-Date"
+            name="stuDOB"
+            disabled
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="stuAddress">Address:</label>
+          <input
+            type="text"
+            class="form-control"
+            id="stuAddress"
+            placeholder="Enter Address"
+            name="stuAddress"
+            disabled
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="stuEnrollDate">Enrollment-Date:</label>
+          <input
+            type="date"
+            class="form-control"
+            id="stuEnrollDate"
+            placeholder="Enter Enrollment-Date"
+            name="stuEnrollDate"
+            disabled
+          />
+        </div>
+
+        <input
+          type="button"
+          class="btn btn-primary"
+          id="empSave"
+          value="Save"
+          onclick="saveData();"
+          disabled
+        />
+        <input
+          type="button"
+          class="btn btn-primary"
+          id="empChange"
+          value="Update"
+          onclick="changeData();"
+          disabled
+        />
+        <input
+          type="button"
+          class="btn btn-primary"
+          id="empReset"
+          value="Reset"
+          onclick="resetForm()"
+        />
+      </form>
+    </div>
+
+    <script>
+      // Connection parameters
+      const jpdbBaseURL = "http://api.login2explore.com:5577";
+      const connToken = "90934368|-31949228047206443|90957097";
+      const stuDBName = "SCHOOL-DB";
+      const stuRelationName = "STUDENT-TABLE";
+
+      // Validate form data
+      function validateAndGetFormData() {
+        const stuIdVar = $("#stuId").val();
+        if (stuIdVar === "") {
+          alert("Student Roll-No Required Value");
+          $("#stuId").focus();
+          return "";
+        }
+        const stuNameVar = $("#stuName").val();
+        if (stuNameVar === "") {
+          alert("Student Name is Required Value");
+          $("#stuName").focus();
+          return "";
+        }
+        const stuClassVar = $("#stuClass").val();
+        if (stuClassVar === "") {
+          alert("Student Class is Required Value");
+          $("#stuClass").focus();
+          return "";
+        }
+        const stuDOBVar = $("#stuDOB").val();
+        if (stuDOBVar === "") {
+          alert("Student Birth-Date is Required Value");
+          $("#stuDOB").focus();
+          return "";
+        }
+        const stuAddressVar = $("#stuAddress").val();
+        if (stuAddressVar === "") {
+          alert("Student Address is Required Value");
+          $("#stuAddress").focus();
+          return "";
+        }
+        const stuEnrollDateVar = $("#stuEnrollDate").val();
+        if (stuEnrollDateVar === "") {
+          alert("Student Enrollment-Date is Required Value");
+          $("#stuEnrollDate").focus();
+          return "";
+        }
+
+        const jsonStrObj = {
+          stuId: stuIdVar,
+          stuName: stuNameVar,
+          stuClass: stuClassVar,
+          stuDOB: stuDOBVar,
+          stuAddress: stuAddressVar,
+          stuEnrollDate: stuEnrollDateVar,
+        };
+        return JSON.stringify(jsonStrObj);
+      }
+
+      // Get student data based on Roll-No
+      function getStu() {
+        const stuIdJsonObj = {
+          stuId: $("#stuId").val(),
+        };
+        const getRequest = createGET_BY_KEYRequest(
+          connToken,
+          stuDBName,
+          stuRelationName,
+          JSON.stringify(stuIdJsonObj)
+        );
+        jQuery.ajaxSetup({ async: false });
+        const resJsonObj = executeCommandAtGivenBaseUrl(
+          getRequest,
+          jpdbBaseURL,
+          "/api/irl"
+        );
+        jQuery.ajaxSetup({ async: true });
+
+        if (resJsonObj.status === 400) {
+          // Roll-No doesn't exist, enable the Save button and form fields
+          $("#empSave").prop("disabled", false);
+          $("#empReset").prop("disabled", false);
+          $("#stuName").prop("disabled", false);
+          $("#stuClass").prop("disabled", false);
+          $("#stuDOB").prop("disabled", false);
+          $("#stuAddress").prop("disabled", false);
+          $("#stuEnrollDate").prop("disabled", false);
+          $("#empChange").prop("disabled", true);
+        } else if (resJsonObj.status === 200) {
+          // Roll-No exists, populate data and enable Update button
+          const student = resJsonObj.result[0];
+          $("#stuId").prop("disabled", true);
+          $("#stuName").val(student.stuName).prop("disabled", false);
+          $("#stuClass").val(student.stuClass).prop("disabled", false);
+          $("#stuDOB").val(student.stuDOB).prop("disabled", false);
+          $("#stuAddress").val(student.stuAddress).prop("disabled", false);
+          $("#stuEnrollDate").val(student.stuEnrollDate).prop("disabled", false);
+          $("#empChange").prop("disabled", false); // Enable the Update button
+          $("#empReset").prop("disabled", false); // Enable Reset
+        }
+      }
+
+      // Reset form
+      function resetForm() {
+        $("#stuId").val("").prop("disabled", false);
+        $("#stuName").val("").prop("disabled", true);
+        $("#stuClass").val("").prop("disabled", true);
+        $("#stuDOB").val("").prop("disabled", true);
+        $("#stuAddress").val("").prop("disabled", true);
+        $("#stuEnrollDate").val("").prop("disabled", true);
+        $("#empSave").prop("disabled", true);
+        $("#empChange").prop("disabled", true);
+        $("#empReset").prop("disabled", false);
+        $("#stuId").focus();
+      }
+
+      // Update data
+      function changeData() {
+        const jsonStr = validateAndGetFormData();
+        if (jsonStr === "") return;
+        const updateRequest = createUPDATERecordRequest(
+          connToken,
+          jsonStr,
+          stuDBName,
+          stuRelationName,
+          $("#stuId").val()
+        );
+        jQuery.ajaxSetup({ async: false });
+        const resJsonObj = executeCommandAtGivenBaseUrl(
+          updateRequest,
+          jpdbBaseURL,
+          "/api/iml"
+        );
+        jQuery.ajaxSetup({ async: true });
+        if (resJsonObj.status === 200) {
+          alert("Data Updated Successfully");
+          resetForm();
+        } else {
+          alert("Error updating data. Please try again.");
+        }
+      }
+
+      // Save data
+      function saveData() {
+        const jsonStr = validateAndGetFormData();
+        if (jsonStr === "") return;
+        const putRequestStr = createPUTRequest(
+          connToken,
+          jsonStr,
+          stuDBName,
+          stuRelationName
+        );
+        jQuery.ajaxSetup({ async: false });
+        const resultObj = executeCommandAtGivenBaseUrl(
+          putRequestStr,
+          jpdbBaseURL,
+          "/api/iml"
+        );
+        jQuery.ajaxSetup({ async: true });
+        if (resultObj.status === 200) {
+          alert("Data Saved Successfully");
+          resetForm();
+        } else {
+          alert("Error saving data. Please try again.");
+        }
+      }
+    </script>
+  </body>
+</html>
